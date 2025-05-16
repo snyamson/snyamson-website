@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #efefef;
+  --foreground: rgb(21, 21, 23);
+  --font-inter: 'Inter', sans-serif;
+  --highlight-from: #2c45d2;
+  --highlight-to: #1a2a7f;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-inter);
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-highlight-from: var(--highlight-from);
+  --color-highlight-to: var(--highlight-to);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme inline {
+  --shadow-input:
+    0px 2px 3px -1px rgba(0, 0, 0, 0.1),
+    0px 1px 0px 0px rgba(25, 28, 33, 0.02),
+    0px 0px 0px 1px rgba(25, 28, 33, 0.08);
 }
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #efefef;
+    --foreground: rgb(21, 21, 23);
+  }
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter);
 }
+
+/* :root {
+  --base: #efefef;
+  --base-2: rgb(255, 255, 255);
+  --base-3: rgba(255, 255, 255, 0.65);
+  --contrast: rgb(21, 21, 23);
+  --contrast-2: rgba(21, 21, 23, 0.5);
+  --contrast-3: rgba(21, 21, 23, 0.15);
+  --contrast-4: rgba(21, 21, 23, 0.11);
+  --contrast-5: rgba(21, 21, 23, 0.04);
+  --primary: #2c45d2;
+  --danger: #ff003c;
+  --header-height: 96px;
+  --footer-height: 72px;
+  --block-gap: 1.5rem;
+} */
+
