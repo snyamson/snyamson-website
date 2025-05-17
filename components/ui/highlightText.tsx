@@ -12,8 +12,8 @@ export const HighlightText = ({
   className?: string;
   containerClassName?: string;
 }) => {
-  let mouseX = useMotionValue(0);
-  let mouseY = useMotionValue(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
   // SVG patterns for different states and themes
   const dotPatterns = {
@@ -33,7 +33,7 @@ export const HighlightText = ({
     clientY,
   }: React.MouseEvent<HTMLDivElement>) {
     if (!currentTarget) return;
-    let { left, top } = currentTarget.getBoundingClientRect();
+    const { left, top } = currentTarget.getBoundingClientRect();
 
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
@@ -42,7 +42,7 @@ export const HighlightText = ({
     <div
       className={cn(
         "group relative flex h-[25rem] w-full items-center justify-center bg-[var(--color-background)] dark:bg-[var(--color-foreground)]",
-        containerClassName,
+        containerClassName
       )}
       onMouseMove={handleMouseMove}
     >
@@ -131,7 +131,7 @@ export const Highlight = ({
       }}
       className={cn(
         `relative inline-block rounded-lg bg-gradient-to-r from-[var(--highlight-from)] to-[var(--highlight-to)] px-1 pb-1 dark:from-[var(--highlight-from)] dark:to-[var(--highlight-to)]`,
-        className,
+        className
       )}
     >
       {children}

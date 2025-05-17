@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { RecentProjectGrid } from "@/components/ui/RecentProjectGrid";
 
 export function RecentProject() {
