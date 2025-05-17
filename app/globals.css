@@ -5,8 +5,10 @@
   --highlight-from: #2c45d2;
   --highlight-to: #1a2a7f;
   --radius: 0.625rem;
-  --background: rgb(21, 21, 23);
-  --foreground: #efefef;
+  --background: #0a0a0a;
+  --foreground: #e0e0e0;
+  --brand-blue: #4a90e2;
+  --brand-green: #2ecc71;
 }
 
 @layer base {
@@ -18,6 +20,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-green: var(--brand-green);
   --color-highlight-from: var(--highlight-from);
   --color-highlight-to: var(--highlight-to);
   --font-sans: var(--font-geist-sans);

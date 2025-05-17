@@ -103,14 +103,16 @@ export const HeroParallax = ({
 
 export const Header = () => {
   return (
-    <div className="max-w-7xl relative mx-auto px-4 w-full left-0 top-0 h-[83vh] flex flex-col justify-end items-start mb-[-100px] md:mb-[-120px]">
+    <div className="max-w-7xl relative mx-auto px-4 w-full left-0 top-0 h-[80vh] md:h-[83vh] flex flex-col justify-end items-start mb-[-95px] md:mb-[-120px]">
       <div>
         <h1 className="text-7xl md:text-9xl dark:text-white">
           Analytics <br /> Engineer
         </h1>
         <div className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200 mb-8">
-          <PointerHighlight>
-            <span className="font-bold">Orchestrate. Automate. Visualize</span>
+          <PointerHighlight pointerClassName="text-[var(--color-brand-blue)]">
+            <span className="font-bold text-[var(--color-brand-green)] px-2">
+              Orchestrate. Automate. Visualize
+            </span>
           </PointerHighlight>
           End-to-End Data Solutions for Scalable Development & Research
         </div>
