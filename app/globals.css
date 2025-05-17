@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #efefef;
-  --foreground: rgb(21, 21, 23);
-  --font-inter: 'Inter', sans-serif;
+  --font-inter: "Inter", sans-serif;
   --highlight-from: #2c45d2;
   --highlight-to: #1a2a7f;
+  --radius: 0.625rem;
+  --background: rgb(21, 21, 23);
+  --foreground: #efefef;
 }
 
 @layer base {
@@ -21,41 +22,71 @@
   --color-highlight-to: var(--highlight-to);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @theme inline {
-  --shadow-input:
-    0px 2px 3px -1px rgba(0, 0, 0, 0.1),
+  --shadow-input: 0px 2px 3px -1px rgba(0, 0, 0, 0.1),
     0px 1px 0px 0px rgba(25, 28, 33, 0.02),
     0px 0px 0px 1px rgba(25, 28, 33, 0.08);
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #efefef;
-    --foreground: rgb(21, 21, 23);
+@theme inline {
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
+}
+
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
   }
-} */
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-inter);
 }
 
-/* :root {
-  --base: #efefef;
-  --base-2: rgb(255, 255, 255);
-  --base-3: rgba(255, 255, 255, 0.65);
-  --contrast: rgb(21, 21, 23);
-  --contrast-2: rgba(21, 21, 23, 0.5);
-  --contrast-3: rgba(21, 21, 23, 0.15);
-  --contrast-4: rgba(21, 21, 23, 0.11);
-  --contrast-5: rgba(21, 21, 23, 0.04);
-  --primary: #2c45d2;
-  --danger: #ff003c;
-  --header-height: 96px;
-  --footer-height: 72px;
-  --block-gap: 1.5rem;
-} */
-
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

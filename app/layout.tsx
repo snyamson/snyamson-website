@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { WebsiteNav } from "@/components/navigation/WebsiteNav";
 
 // Initialize Inter font with proper configuration
 const inter = Inter({
@@ -25,8 +24,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased">
         {/* Navigation Implementation */}
-        <WebsiteNav />
-        
+
         {/* All Components */}
         {children}
 

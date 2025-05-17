@@ -2,27 +2,28 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useOutsideClick } from "@/hooks/use-outside-click";
+import { CodeBlockImplementation } from "./CodeBlockImplementation";
 
 export const RecentArticles = () => {
   return (
     <div className="w-full">
-      <div className="flex flex-col lg:flex-row">
-        {/* Left column - 30% on desktop, full width on mobile */}
-        <div
-          className="w-full lg:w-3/10"
-          style={{ width: "100%", maxWidth: "100%", flex: "0 0 20%" }}
-        ></div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Left column - 40% on desktop (2/5 columns), full width on mobile */}
+        <div className="lg:col-span-2">
+          {/* Left column content */}
+          <CodeBlockImplementation />
+        </div>
 
-        {/* Right column - 70% on desktop, full width on mobile */}
-        <div className="w-full lg:flex-1" style={{ flex: "0 0 80%" }}>
-          <Card />
+        {/* Right column - 60% on desktop (3/5 columns), full width on mobile */}
+        <div className="lg:col-span-3">
+          <ArticleCard />
         </div>
       </div>
     </div>
   );
 };
 
-export function Card() {
+export function ArticleCard() {
   const [active, setActive] = useState<(typeof cards)[number] | boolean | null>(
     null
   );
@@ -86,7 +87,7 @@ export function Card() {
             <motion.div
               layoutId={`card-${active.title}-${id}`}
               ref={ref}
-              className="w-full h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
+              className="w-full max-w-[500px]  h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
             >
               <motion.div layoutId={`image-${active.title}-${id}`}>
                 <img

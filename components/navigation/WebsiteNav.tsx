@@ -20,15 +20,15 @@ export function WebsiteNav() {
     },
     {
       name: "Blog",
-      link: "#blog",
+      link: "/blog",
     },
     {
       name: "About",
-      link: "#about",
+      link: "/about",
     },
     {
       name: "Contact",
-      link: "#contact",
+      link: "/contact",
     },
   ];
 
@@ -38,16 +38,16 @@ export function WebsiteNav() {
     <div className="relative w-full">
       <Navbar>
         {/* Desktop Navigation */}
-        <NavBody className="bg-[rgb(21,21,23)]">
+        <NavBody>
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <NavbarButton variant="primary">Book a session</NavbarButton>
+            <NavbarButton variant="primary">Book a Session</NavbarButton>
           </div>
         </NavBody>
 
         {/* Mobile Navigation */}
-        <MobileNav className="bg-[rgb(21,21,23)]">
+        <MobileNav>
           <MobileNavHeader>
             <NavbarLogo />
             <MobileNavToggle
@@ -76,7 +76,7 @@ export function WebsiteNav() {
                 variant="primary"
                 className="w-full"
               >
-                Book a session
+                Book a Session
               </NavbarButton>
             </div>
           </MobileNavMenu>

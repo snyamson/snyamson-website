@@ -12,9 +12,7 @@ export function SectionWrapper({
 }) {
   return (
     <section id={id} className={cn("py-20 w-full", className)}>
-      <div className="w-[90vw] mx-auto">
-        {children}
-      </div>
+      <div className="max-w-7xl mx-auto">{children}</div>
     </section>
   );
 }
