@@ -1,9 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    domains: ["directus.snyamson.com", "aceternity.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "directus.snyamson.com",
+      },
+      {
+        protocol: "https",
+        hostname: "aceternity.com",
+      },
+    ],
   },
 };
 
