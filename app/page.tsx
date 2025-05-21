@@ -9,6 +9,7 @@ import { HeaderText } from "@/components/ui/header-text";
 import { SectionWrapper } from "@/components/SectionWrapper";
 import { HomeParallax } from "@/components/sections/hero/HomeParallax";
 import { SpotlightImplementation } from "@/components/sections/cta/SpotlightImplementation";
+import { ContactForm } from "@/components/sections/contact/Contact";
 
 export default function Home() {
   return (
@@ -35,6 +36,9 @@ export default function Home() {
           Recent Articles
         </HeaderText>
         <RecentArticles />
+      </SectionWrapper>
+      <SectionWrapper>
+        <ContactForm />
       </SectionWrapper>
     </main>
   );

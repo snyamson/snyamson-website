@@ -11,7 +11,7 @@ export function SectionWrapper({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("py-20 w-full", className)}>
+    <section id={id} className={cn("py-20 px-4 w-full", className)}>
       <div className="max-w-7xl mx-auto">{children}</div>
     </section>
   );

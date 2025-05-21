@@ -50,8 +50,9 @@ export const HeroParallax = ({
     useTransform(scrollYProgress, [0, 0.2], [20, 0]),
     springConfig
   );
+  // change the far right digit in the array to control the distance between the header and the product onscroll
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [-700, 500]),
+    useTransform(scrollYProgress, [0, 0.2], [-700, 360]),
     springConfig
   );
   return (
@@ -103,7 +104,7 @@ export const HeroParallax = ({
 
 export const Header = () => {
   return (
-    <div className="max-w-7xl relative mx-auto px-4 w-full left-0 top-0 h-[75vh] md:h-[83vh] flex flex-col justify-end items-start mb-[-90px] md:mb-[-120px]">
+    <div className="max-w-7xl z-[10] relative mx-auto px-4 w-full left-0 top-0 h-[75vh] md:h-[83vh] flex flex-col justify-end items-start mb-[-90px] md:mb-[-120px]">
       <div>
         <h1 className="text-7xl md:text-9xl dark:text-white">
           Analytics <br /> Engineer

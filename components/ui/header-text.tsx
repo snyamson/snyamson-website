@@ -26,7 +26,7 @@ export function HeaderText({
   const sizeClasses = {
     "xxxxx-large": "text-[clamp(2.25rem,2.25rem+((1vw-0.2rem)*4.688),6rem)]",
     "xxxx-large": "text-[clamp(3rem,3vw+2rem,4.22rem)]",
-    "xxx-large": "text-[clamp(2rem,2rem+((1vw-0.2rem)*0.313),2.25rem)]",
+    "xxx-large": "text-[clamp(3rem,2rem+((1vw-0.2rem)*0.313),2.25rem)]",
     "xx-large": "text-[clamp(1.75rem,1.75rem+((1vw-0.2rem)*0.156),1.875rem)]",
     "x-large": "text-[1.5rem]",
     large: "text-[1.3125rem]",
