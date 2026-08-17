@@ -17,7 +17,7 @@
     "@sanity/vision": "^3.68.3",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.469.0",
-    "next": "15.1.4",
+    "next": "^15.5.23",
     "next-sanity": "^9.8.42",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -31,7 +31,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.1.4",
+    "eslint-config-next": "^15.5.23",
     "tailwindcss": "^4.0.0",
     "typescript": "^5"
   }
