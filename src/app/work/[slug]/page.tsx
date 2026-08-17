@@ -23,7 +23,10 @@ import {
   type SiteSettings,
 } from "@/lib/queries";
 import { seedProjectDetails, seedProjects, seedSiteSettings } from "@/lib/seed";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbSchema, projectSchema } from "@/lib/structuredData";
 import { sanityFetch } from "@/sanity/client";
+import { siteUrl } from "@/sanity/env";
 import { urlForImage } from "@/sanity/image";
 
 export const revalidate = 60;
@@ -52,9 +55,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: project.title,
     description: project.summary ?? undefined,
+    alternates: { canonical: `/work/${slug}` },
     openGraph: {
       title: project.title,
       description: project.summary ?? undefined,
+      url: `${siteUrl}/work/${slug}`,
       type: "article",
     },
   };
@@ -129,6 +134,17 @@ export default async function ProjectPage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={[
+          projectSchema({ siteUrl, project, summary: project.summary }),
+          breadcrumbSchema(siteUrl, [
+            { name: "Home", path: "/" },
+            { name: "Selected work", path: "/work" },
+            { name: project.title, path: `/work/${project.slug}` },
+          ]),
+        ]}
+      />
+
       <Navbar settings={site} />
 
       <main>

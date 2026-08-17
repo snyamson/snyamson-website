@@ -10,7 +10,10 @@ import { Reveal } from "@/components/ui/Reveal";
 import { getCv } from "@/lib/getCv";
 import { siteSettingsQuery, type SiteSettings } from "@/lib/queries";
 import { seedSiteSettings } from "@/lib/seed";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbSchema, profilePageSchema } from "@/lib/structuredData";
 import { sanityFetch } from "@/sanity/client";
+import { siteUrl } from "@/sanity/env";
 
 export const revalidate = 60;
 
@@ -21,6 +24,13 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       profile.summary ||
       `Curriculum vitae for ${profile.fullName} — ${profile.headline}`,
+    alternates: { canonical: "/cv" },
+    openGraph: {
+      title: `${profile.fullName} — CV`,
+      description: profile.summary,
+      url: `${siteUrl}/cv`,
+      type: "profile",
+    },
   };
 }
 
@@ -34,6 +44,16 @@ export default async function CvPage() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          profilePageSchema({ siteUrl, cv }),
+          breadcrumbSchema(siteUrl, [
+            { name: "Home", path: "/" },
+            { name: "CV", path: "/cv" },
+          ]),
+        ]}
+      />
+
       <Navbar settings={site} />
 
       <main>

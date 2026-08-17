@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { Contact } from "@/components/sections/Contact";
@@ -31,12 +33,35 @@ import {
   seedSiteSettings,
   seedSpecialities,
 } from "@/lib/seed";
+import { getCv } from "@/lib/getCv";
+import { personSchema, websiteSchema } from "@/lib/structuredData";
+import { JsonLd } from "@/components/ui/JsonLd";
 import { sanityFetch } from "@/sanity/client";
+import { siteUrl } from "@/sanity/env";
 
 export const revalidate = 60;
 
+export async function generateMetadata(): Promise<Metadata> {
+  const cv = await getCv();
+  const title = `${cv.profile.fullName} — ${cv.profile.headline}`;
+
+  return {
+    // The default title in the layout is a template; the home page names the
+    // person outright, because that is the query it needs to answer.
+    title: { absolute: title },
+    description: cv.profile.summary,
+    alternates: { canonical: "/" },
+    openGraph: {
+      title,
+      description: cv.profile.summary,
+      url: siteUrl,
+      type: "profile",
+    },
+  };
+}
+
 export default async function HomePage() {
-  const [settings, hero, specialities, processSteps, services, projects, contact] =
+  const [settings, hero, specialities, processSteps, services, projects, contact, cv] =
     await Promise.all([
       sanityFetch<SiteSettings>(siteSettingsQuery, seedSiteSettings),
       sanityFetch<HeroContent>(heroQuery, seedHero),
@@ -45,6 +70,7 @@ export default async function HomePage() {
       sanityFetch<Service[]>(servicesQuery, seedServices),
       sanityFetch<Project[]>(projectsQuery, seedProjects),
       sanityFetch<ContactContent>(contactQuery, seedContact),
+      getCv(),
     ]);
 
   // A partially filled singleton should not blank out the nav or the footer,
@@ -55,6 +81,15 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* The Person graph is what lets a name search resolve to this site as
+          an entity rather than as a page that happens to mention it. */}
+      <JsonLd
+        data={[
+          personSchema({ siteUrl, settings: site, cv, specialities }),
+          websiteSchema({ siteUrl, settings: site, cv }),
+        ]}
+      />
+
       <Navbar settings={site} />
 
       <main>

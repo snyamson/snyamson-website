@@ -15,7 +15,10 @@ import {
   type SiteSettings,
 } from "@/lib/queries";
 import { seedProjects, seedSiteSettings } from "@/lib/seed";
+import { breadcrumbSchema } from "@/lib/structuredData";
+import { JsonLd } from "@/components/ui/JsonLd";
 import { sanityFetch } from "@/sanity/client";
+import { siteUrl } from "@/sanity/env";
 
 export const revalidate = 60;
 
@@ -23,6 +26,14 @@ export const metadata: Metadata = {
   title: "Selected work",
   description:
     "Pipelines, indicator libraries and dashboards built for programme teams, response coordinators and sustainability leads.",
+  alternates: { canonical: "/work" },
+  openGraph: {
+    title: "Selected work",
+    description:
+      "Pipelines, indicator libraries and dashboards built for programme teams, response coordinators and sustainability leads.",
+    url: `${siteUrl}/work`,
+    type: "website",
+  },
 };
 
 export default async function WorkPage() {
@@ -35,6 +46,13 @@ export default async function WorkPage() {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema(siteUrl, [
+          { name: "Home", path: "/" },
+          { name: "Selected work", path: "/work" },
+        ])}
+      />
+
       <Navbar settings={site} />
 
       <main>
