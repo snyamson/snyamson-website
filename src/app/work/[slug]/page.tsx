@@ -6,10 +6,14 @@ import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { InkButton, UnderlineLink } from "@/components/ui/Buttons";
+import { Counter } from "@/components/ui/Counter";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { Parallax } from "@/components/ui/Parallax";
 import { BannerPlaceholder } from "@/components/ui/Placeholders";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { RichText } from "@/components/ui/RichText";
+import { TextReveal } from "@/components/ui/TextReveal";
 import { STAGGER } from "@/lib/motion";
 import {
   nextProjects,
@@ -171,11 +175,14 @@ export default async function ProjectPage({ params }: PageProps) {
                     <p className="eyebrow">{meta}</p>
                   </Reveal>
                 ) : null}
-                <Reveal delay={0.08}>
-                  <h1 className="mt-5 font-display text-[clamp(40px,6.4vw,80px)] font-light leading-[0.98] tracking-[-0.035em] text-ink">
-                    {project.title}
-                  </h1>
-                </Reveal>
+                <TextReveal
+                  as="h1"
+                  text={project.title}
+                  trigger="mount"
+                  delay={0.08}
+                  stagger={0.06}
+                  className="mt-5 font-display text-[clamp(40px,6.4vw,80px)] font-light leading-[0.98] tracking-[-0.035em] text-ink"
+                />
               </div>
 
               {project.summary ? (
@@ -192,22 +199,35 @@ export default async function ProjectPage({ params }: PageProps) {
         {/* Banner */}
         <section className="pb-[56px] lg:pb-[72px]">
           <div className="shell-wide">
-            <Reveal delay={0.1}>
+            <Reveal direction="mask" delay={0.1}>
               <div className="relative aspect-[2/1] w-full overflow-hidden rounded-card border border-border bg-surface">
-                {bannerUrl ? (
-                  <Image
-                    src={bannerUrl}
-                    alt={
-                      project.heroImage?.alt ?? project.thumbnail?.alt ?? project.title
-                    }
-                    fill
-                    priority
-                    sizes="(max-width: 1440px) 100vw, 1400px"
-                    className="object-cover object-top"
-                  />
-                ) : (
-                  <BannerPlaceholder index={project.order - 1} title={project.title} />
-                )}
+                {/* Overscanned so the drift never exposes the image's edge —
+                    see ProjectCard, which crops the same way at card size. */}
+                <div className="absolute inset-x-0 -inset-y-[7%]">
+                  <Parallax className="h-full w-full" distance={40} zoom={0.03}>
+                    <div className="relative h-full w-full">
+                      {bannerUrl ? (
+                        <Image
+                          src={bannerUrl}
+                          alt={
+                            project.heroImage?.alt ??
+                            project.thumbnail?.alt ??
+                            project.title
+                          }
+                          fill
+                          priority
+                          sizes="(max-width: 1440px) 100vw, 1400px"
+                          className="object-cover object-top"
+                        />
+                      ) : (
+                        <BannerPlaceholder
+                          index={project.order - 1}
+                          title={project.title}
+                        />
+                      )}
+                    </div>
+                  </Parallax>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -307,8 +327,8 @@ export default async function ProjectPage({ params }: PageProps) {
                     <div className="border-t border-sand/25 pt-5">
                       <dt className="sr-only">{result.label}</dt>
                       <dd>
-                        <span className="block font-display text-[34px] font-light leading-none tracking-[-0.03em] text-sand sm:text-[40px]">
-                          {result.value}
+                        <span className="block font-display text-[34px] font-light leading-none tabular-nums tracking-[-0.03em] text-sand sm:text-[40px]">
+                          <Counter value={result.value} />
                         </span>
                         <span className="mt-3 block font-body text-[12px] leading-snug text-sand/70">
                           {result.label}
@@ -350,13 +370,16 @@ export default async function ProjectPage({ params }: PageProps) {
         <section className="border-t border-border bg-surface py-[72px] lg:py-[96px]">
           <div className="shell-wide">
             <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
-              <Reveal>
-                <h2 className="max-w-[560px] font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[38px]">
-                  Have a reporting problem that looks like this one?
-                </h2>
-              </Reveal>
+              <TextReveal
+                as="h2"
+                text="Have a reporting problem that looks like this one?"
+                stagger={0.035}
+                className="max-w-[560px] font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[38px]"
+              />
               <Reveal delay={0.08}>
-                <InkButton href="/#contact">Start a project</InkButton>
+                <Magnetic>
+                  <InkButton href="/#contact">Start a project</InkButton>
+                </Magnetic>
               </Reveal>
             </div>
           </div>

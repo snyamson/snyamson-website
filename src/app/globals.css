@@ -70,6 +70,22 @@
     }
   }
 
+  --animate-pulse-node: pulse-node 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  /* A ring that expands out of the dot and fades, rather than the dot itself
+     changing size — a status light should not appear to move. */
+  @keyframes pulse-node {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    70%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+
   @keyframes scroll-hint {
     0%,
     100% {
@@ -190,6 +206,64 @@
   text-transform: uppercase;
   letter-spacing: 0.22em;
   color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * Paper grain
+ *
+ * A fixed, non-repeating fractal noise held at 3.5% over the whole viewport.
+ * Warm paper rendered as a flat fill is the one thing that gives an
+ * otherwise careful layout away as a screen — the grain restores the tooth
+ * the colour is named after, without introducing a value the palette does
+ * not already contain (it is pure luminance noise, so it tints nothing).
+ *
+ * `fixed` rather than scrolling: real paper texture belongs to the sheet the
+ * page is printed on, not to the page, so it must not travel with content.
+ * ------------------------------------------------------------------ */
+@utility grain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ * Pointer spotlight
+ *
+ * A warm wash that follows the pointer across a card. `--mx`/`--my` are
+ * written by a pointermove handler as raw percentages, so the browser
+ * repaints a gradient rather than React re-rendering a tree.
+ *
+ * The default position is the card's own centre, which is where the wash
+ * sits before the pointer has ever been over it — a spotlight that starts
+ * parked in a corner announces the mechanism.
+ * ------------------------------------------------------------------ */
+@utility spotlight {
+  --mx: 50%;
+  --my: 50%;
+
+  position: absolute;
+  inset: 0;
+  /* Negative, against a parent that is `isolate`: inside a stacking context
+     a negative layer paints after the element's own background and before
+     its content, which is the only ordering that puts the wash under the
+     type. A positive z-index would paint over the words and tint them. */
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 350ms ease-out;
+  background: radial-gradient(
+    320px circle at var(--mx) var(--my),
+    color-mix(in oklab, var(--color-sand) 55%, transparent),
+    transparent 70%
+  );
+}
+
+.group:hover > .spotlight {
+  opacity: 1;
 }
 
 /* Process rail: each card must sit under its own node, so the column count

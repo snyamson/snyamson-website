@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
 import { Reveal } from "@/components/ui/Reveal";
+import { RuleDraw } from "@/components/ui/RuleDraw";
+import { TextReveal } from "@/components/ui/TextReveal";
 import { cn } from "@/lib/cn";
 
 type SectionHeaderProps = {
@@ -18,6 +20,11 @@ type SectionHeaderProps = {
  * note beside it and an optional action pushed to the right — matching the
  * "FEATURED WORK … VIEW ALL PROJECTS" and "MY PROCESS  A clear roadmap"
  * rows in the reference.
+ *
+ * The rule beneath draws itself across the measure as the header arrives.
+ * Every section opening the same way is what gives the page its metre: by
+ * the third one the reader knows a new subject has started before they have
+ * read the label.
  */
 export function SectionHeader({
   eyebrow,
@@ -41,6 +48,7 @@ export function SectionHeader({
         </div>
         {action}
       </div>
+      <RuleDraw className="mt-5" delay={0.15} />
     </Reveal>
   );
 }
@@ -60,11 +68,16 @@ export function SectionStatement({
 }: SectionStatementProps) {
   return (
     <div className={className}>
-      <Reveal delay={0.06}>
-        <p className="font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[36px]">
-          {statement}
-        </p>
-      </Reveal>
+      {/* Split per word: "Model. Test. Report." is three claims, and letting
+          each land on its own is the difference between reading a sentence
+          and hearing one. */}
+      <TextReveal
+        as="p"
+        text={statement}
+        delay={0.06}
+        stagger={0.09}
+        className="font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[36px]"
+      />
       {intro ? (
         <Reveal delay={0.12}>
           <p className="mt-4 max-w-[340px] text-[14px] leading-[1.75] text-muted">

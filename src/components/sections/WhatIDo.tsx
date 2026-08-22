@@ -35,9 +35,18 @@ export function WhatIDo({ specialities }: { specialities: Speciality[] }) {
                   as="li"
                   key={item._id}
                   delay={(index % 4) * STAGGER}
-                  className="group h-full border-l border-border pl-6 lg:pl-8"
+                  className="group relative h-full border-l border-border pl-6 lg:pl-8"
                 >
-                  <span className="grid h-11 w-11 place-items-center rounded-card border border-border-strong bg-bg transition-colors duration-[250ms] group-hover:bg-sand">
+                  {/* An ink segment runs down the divider on hover, sitting
+                      exactly on the hairline rather than beside it. The
+                      column is picked out by its own rule going dark — no
+                      new element appears, and nothing shifts. */}
+                  <span
+                    className="absolute -left-px top-0 h-full w-px origin-top scale-y-0 bg-ink transition-transform duration-[550ms] ease-out group-hover:scale-y-100"
+                    aria-hidden
+                  />
+
+                  <span className="grid h-11 w-11 place-items-center rounded-card border border-border-strong bg-bg transition-[background-color,transform] duration-[250ms] ease-out group-hover:-translate-y-1 group-hover:bg-sand">
                     <Icon
                       className="h-[19px] w-[19px] text-ink"
                       strokeWidth={1.4}

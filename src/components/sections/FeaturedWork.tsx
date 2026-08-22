@@ -22,7 +22,15 @@ export function FeaturedWork({ projects }: { projects: Project[] }) {
 
         <ul className="mt-12 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {shown.map((project, index) => (
-            <Reveal as="li" key={project._id} delay={(index % 4) * STAGGER}>
+            /* `mask` rather than `up`: a portfolio row is a set of images,
+               and an image that is uncovered from its own edge reads as
+               being developed rather than flown in. */
+            <Reveal
+              as="li"
+              key={project._id}
+              direction="mask"
+              delay={(index % 4) * STAGGER}
+            >
               <ProjectCard project={project} index={index} />
             </Reveal>
           ))}

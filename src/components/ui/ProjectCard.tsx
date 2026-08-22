@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { Parallax } from "@/components/ui/Parallax";
 import { ProjectPlaceholder } from "@/components/ui/Placeholders";
 import { cn } from "@/lib/cn";
 import type { Project } from "@/lib/queries";
@@ -49,24 +50,32 @@ export function ProjectCard({
             "transition-colors duration-[250ms] group-hover/card:border-border-strong",
           )}
         >
-          {/* Muted until hovered, then full colour with a slow push in. */}
-          <div className="absolute inset-0 saturate-[0.35] transition-[filter,transform] duration-[550ms] ease-out group-hover/card:scale-[1.04] group-hover/card:saturate-100">
-            {thumbUrl ? (
-              <Image
-                src={thumbUrl}
-                alt={project.thumbnail?.alt ?? project.title}
-                fill
-                sizes={
-                  feature
-                    ? "(max-width: 768px) 92vw, (max-width: 1280px) 46vw, 620px"
-                    : "(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 320px"
-                }
-                className="object-cover object-top"
-              />
-            ) : (
-              <ProjectPlaceholder index={index} title={project.title} />
-            )}
+          {/* Overscanned top and bottom so the parallax drift always has
+              image to pull into frame — a layer that moves inside a fixed
+              crop must be larger than the crop or it exposes its own edge. */}
+          <div className="absolute inset-x-0 -inset-y-[9%]">
+            <Parallax className="h-full w-full" distance={34} zoom={0.05}>
+              {/* Muted until hovered, then full colour with a slow push in. */}
+              <div className="relative h-full w-full saturate-[0.35] transition-[filter,transform] duration-[550ms] ease-out group-hover/card:scale-[1.04] group-hover/card:saturate-100">
+                {thumbUrl ? (
+                  <Image
+                    src={thumbUrl}
+                    alt={project.thumbnail?.alt ?? project.title}
+                    fill
+                    sizes={
+                      feature
+                        ? "(max-width: 768px) 92vw, (max-width: 1280px) 46vw, 620px"
+                        : "(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 320px"
+                    }
+                    className="object-cover object-top"
+                  />
+                ) : (
+                  <ProjectPlaceholder index={index} title={project.title} />
+                )}
+              </div>
+            </Parallax>
           </div>
+
         </div>
 
         <div
@@ -91,13 +100,21 @@ export function ProjectCard({
           <div className="flex items-start justify-between gap-4">
             <h3
               className={cn(
-                "text-ink",
+                "relative text-ink",
                 feature
                   ? "font-display text-[24px] font-medium leading-[1.15] tracking-[-0.02em] sm:text-[28px]"
                   : "font-body text-[12px] font-semibold uppercase tracking-[0.14em]",
               )}
             >
-              {project.title}
+              <span className="relative">
+                {project.title}
+                {/* The same wipe as UnderlineLink, so a card and a link read
+                    as the same gesture at two sizes. */}
+                <span
+                  className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-sand-deep transition-transform duration-[400ms] ease-out group-hover/card:scale-x-100"
+                  aria-hidden
+                />
+              </span>
             </h3>
 
             {feature ? (

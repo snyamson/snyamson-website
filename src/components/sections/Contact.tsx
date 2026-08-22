@@ -4,8 +4,10 @@ import { ChevronDown, Mail, MapPin } from "lucide-react";
 import { useId, useState, type FormEvent } from "react";
 
 import { OrbitArcs } from "@/components/ui/Decor";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeading";
+import { TextReveal } from "@/components/ui/TextReveal";
 import { cn } from "@/lib/cn";
 import type { Contact as ContactData, SiteSettings } from "@/lib/queries";
 
@@ -15,10 +17,18 @@ type Status =
   | { state: "sent" }
   | { state: "error"; message: string };
 
+/**
+ * Focus does three things at once — the hairline goes to ink, a second ink
+ * line doubles it, and a warm halo lifts the field off the wash. One of them
+ * alone is easy to miss on a page this quiet, and a field you cannot tell is
+ * focused is the most common way a form loses someone halfway through.
+ */
 const FIELD =
   "w-full rounded-card border border-border bg-card px-4 py-3.5 font-body text-[14px] text-ink " +
-  "placeholder:text-muted/70 transition-[border-color,box-shadow] duration-200 " +
-  "focus:border-ink focus:outline-none focus:ring-1 focus:ring-ink";
+  "placeholder:text-muted/70 transition-[border-color,box-shadow,background-color] duration-200 " +
+  "hover:border-border-strong " +
+  "focus:border-ink focus:outline-none focus:ring-1 focus:ring-ink " +
+  "focus:shadow-[0_0_0_5px_color-mix(in_oklab,var(--color-sand)_60%,transparent)]";
 
 function FieldError({ id, children }: { id: string; children?: string }) {
   if (!children) return null;
@@ -96,11 +106,12 @@ export function Contact({
         <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)] lg:gap-16">
           {/* Left: the pitch and the direct routes. */}
           <div>
-            <Reveal>
-              <h3 className="max-w-[420px] font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[36px]">
-                {contact.heading}
-              </h3>
-            </Reveal>
+            <TextReveal
+              as="h3"
+              text={contact.heading}
+              stagger={0.045}
+              className="max-w-[420px] font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[36px]"
+            />
 
             <Reveal delay={0.08}>
               <p className="mt-5 max-w-[420px] text-[14px] leading-[1.8] text-muted">
@@ -142,13 +153,22 @@ export function Contact({
             {contact.availabilityNote ? (
               <Reveal delay={0.2}>
                 <div className="mt-10 flex items-start gap-3 rounded-card bg-ink px-5 py-4">
-                  <span
-                    className={cn(
-                      "mt-[7px] h-2 w-2 shrink-0 rounded-full",
-                      contact.available ? "bg-sand" : "bg-muted",
-                    )}
-                    aria-hidden
-                  />
+                  {/* A live status light. The ring expands out of the dot
+                      rather than the dot changing size — something that
+                      reports a state should not itself look unsettled. Only
+                      when the answer is yes; an unavailable mark that
+                      pulses is drawing attention to a closed door. */}
+                  <span className="relative mt-[7px] flex h-2 w-2 shrink-0" aria-hidden>
+                    {contact.available ? (
+                      <span className="absolute inset-0 rounded-full bg-sand animate-[var(--animate-pulse-node)]" />
+                    ) : null}
+                    <span
+                      className={cn(
+                        "relative h-2 w-2 rounded-full",
+                        contact.available ? "bg-sand" : "bg-muted",
+                      )}
+                    />
+                  </span>
                   <p className="font-body text-[12px] uppercase leading-[1.6] tracking-[0.12em] text-sand">
                     {contact.availabilityNote}
                   </p>
@@ -254,19 +274,21 @@ export function Contact({
               </div>
 
               <div className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className={cn(
-                    "inline-flex items-center justify-center gap-3 rounded-full bg-ink px-8 py-3.5",
-                    "font-body text-[13px] font-medium uppercase tracking-[0.12em] text-sand",
-                    "transition-[background-color,transform,opacity] duration-[250ms] ease-out",
-                    "hover:bg-ink-2 hover:scale-[1.02] active:scale-[0.99]",
-                    "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100",
-                  )}
-                >
-                  {sending ? "Sending…" : contact.submitLabel}
-                </button>
+                <Magnetic>
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-3 rounded-full bg-ink px-8 py-3.5",
+                      "font-body text-[13px] font-medium uppercase tracking-[0.12em] text-sand",
+                      "transition-[background-color,transform,opacity] duration-[250ms] ease-out",
+                      "hover:bg-ink-2 hover:scale-[1.02] active:scale-[0.97]",
+                      "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100",
+                    )}
+                  >
+                    {sending ? "Sending…" : contact.submitLabel}
+                  </button>
+                </Magnetic>
 
                 {/* One live region for both outcomes, so a screen reader
                     announces the result without the form losing focus. */}

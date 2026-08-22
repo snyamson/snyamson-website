@@ -8,9 +8,10 @@ import { useEffect, useState } from "react";
 
 import { UnderlineLink } from "@/components/ui/Buttons";
 import { Logo } from "@/components/ui/Logo";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { cn } from "@/lib/cn";
 import { resolveHref } from "@/lib/href";
-import { EASE, INSTANT } from "@/lib/motion";
+import { EASE, INSTANT, SPRING_SMOOTH } from "@/lib/motion";
 import type { SiteSettings } from "@/lib/queries";
 
 export function Navbar({ settings }: { settings: SiteSettings }) {
@@ -85,13 +86,19 @@ export function Navbar({ settings }: { settings: SiteSettings }) {
                   )}
                 >
                   {link.label}
-                  <span
-                    className={cn(
-                      "absolute -bottom-1.5 left-0 h-px w-full origin-left bg-ink transition-transform duration-300 ease-out",
-                      active === link.href ? "scale-x-100" : "scale-x-0",
-                    )}
-                    aria-hidden
-                  />
+                  {/* One underline for the whole nav, not one per link.
+                      `layoutId` makes framer move the single rendered
+                      instance between list items, so the mark travels along
+                      the row as the reader scrolls between sections instead
+                      of blinking out here and in again over there. */}
+                  {active === link.href ? (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute -bottom-1.5 left-0 h-px w-full bg-ink"
+                      transition={reduced ? INSTANT : SPRING_SMOOTH}
+                      aria-hidden
+                    />
+                  ) : null}
                 </Link>
               </li>
             ))}
@@ -119,6 +126,10 @@ export function Navbar({ settings }: { settings: SiteSettings }) {
           </button>
         </div>
       </div>
+
+      {/* Read-position hairline, pinned to the header's own bottom edge so it
+          sits on the border rather than floating under it. */}
+      <ScrollProgress />
 
       <AnimatePresence>
         {open ? (

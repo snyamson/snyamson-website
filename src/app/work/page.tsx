@@ -4,9 +4,13 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { InkButton } from "@/components/ui/Buttons";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { OrbitArcs } from "@/components/ui/Decor";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { RuleDraw } from "@/components/ui/RuleDraw";
+import { TextReveal } from "@/components/ui/TextReveal";
+import { Counter } from "@/components/ui/Counter";
 import { STAGGER } from "@/lib/motion";
 import {
   projectsQuery,
@@ -76,11 +80,17 @@ export default async function WorkPage() {
 
             <div className="mt-10 grid gap-y-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-end lg:gap-x-16">
               <div>
-                <Reveal delay={0.05}>
-                  <h1 className="font-display text-[clamp(52px,8vw,104px)] font-extralight leading-[0.92] tracking-[-0.04em] text-ink">
-                    Selected work
-                  </h1>
-                </Reveal>
+                {/* The same masthead treatment as the home page greeting, one
+                    size down: every page opens by having its own name rise
+                    out of the paper. */}
+                <TextReveal
+                  as="h1"
+                  text="Selected work"
+                  trigger="mount"
+                  delay={0.05}
+                  stagger={0.08}
+                  className="font-display text-[clamp(52px,8vw,104px)] font-extralight leading-[0.92] tracking-[-0.04em] text-ink"
+                />
               </div>
 
               <div>
@@ -95,11 +105,12 @@ export default async function WorkPage() {
 
                 <Reveal delay={0.18}>
                   <p className="mt-6 flex items-baseline gap-3 font-body text-[11px] uppercase tracking-[0.2em] text-muted">
-                    <span className="font-display text-[28px] font-light tracking-[-0.02em] text-ink">
-                      {String(projects.length).padStart(2, "0")}
+                    <span className="font-display text-[28px] font-light tabular-nums tracking-[-0.02em] text-ink">
+                      <Counter value={String(projects.length).padStart(2, "0")} />
                     </span>
                     {projects.length === 1 ? "project" : "projects"}
                   </p>
+                  <RuleDraw className="mt-5 max-w-[180px]" delay={0.28} />
                 </Reveal>
               </div>
             </div>
@@ -121,6 +132,7 @@ export default async function WorkPage() {
                   <Reveal
                     as="li"
                     key={project._id}
+                    direction="mask"
                     delay={(index % 2) * STAGGER}
                     className={index % 2 === 1 ? "lg:mt-[88px]" : undefined}
                   >
@@ -136,13 +148,16 @@ export default async function WorkPage() {
         <section className="border-t border-border bg-surface py-[72px] lg:py-[96px]">
           <div className="shell-wide">
             <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
-              <Reveal>
-                <h2 className="max-w-[560px] font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[38px]">
-                  Have a reporting problem that looks like one of these?
-                </h2>
-              </Reveal>
+              <TextReveal
+                as="h2"
+                text="Have a reporting problem that looks like one of these?"
+                stagger={0.035}
+                className="max-w-[560px] font-display text-[30px] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[38px]"
+              />
               <Reveal delay={0.08}>
-                <InkButton href="/#contact">Start a project</InkButton>
+                <Magnetic>
+                  <InkButton href="/#contact">Start a project</InkButton>
+                </Magnetic>
               </Reveal>
             </div>
           </div>

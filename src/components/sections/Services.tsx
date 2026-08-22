@@ -17,7 +17,10 @@ export function Services({ services }: { services: Service[] }) {
         />
 
         {/* A single hairline lattice: cards share edges rather than each
-            carrying its own box, which is what keeps the grid this quiet. */}
+            carrying its own box, which is what keeps the grid this quiet.
+            The pointer wash is what breaks that quiet on demand — it reads
+            as light falling on the sheet, so the lattice can stay flat and
+            still answer the pointer. */}
         <ul className="mt-12 grid border-t border-l border-border sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => {
             const Icon = resolveIcon(service.icon);
@@ -26,7 +29,8 @@ export function Services({ services }: { services: Service[] }) {
                 as="li"
                 key={service._id}
                 delay={(index % 3) * STAGGER}
-                className="group relative flex flex-col border-b border-r border-border bg-bg px-8 py-10 transition-colors duration-[250ms] hover:bg-surface"
+                spotlight
+                className="flex flex-col border-b border-r border-border bg-bg px-8 py-10"
               >
                 <div className="flex items-start justify-between gap-6">
                   <Icon
@@ -34,11 +38,21 @@ export function Services({ services }: { services: Service[] }) {
                     strokeWidth={1.3}
                     aria-hidden
                   />
+                  {/* The index rolls: the muted copy leaves upward and an ink
+                      one takes its place. Two stacked lines in a box one line
+                      tall — the same trick a split-flap board uses, and the
+                      only thing on this card that moves far enough to say
+                      which cell is live. */}
                   <span
-                    className="font-display text-[13px] tracking-[0.1em] text-border-strong"
+                    className="block h-[18px] overflow-hidden font-display text-[13px] tracking-[0.1em]"
                     aria-hidden
                   >
-                    {String(index + 1).padStart(2, "0")}
+                    <span className="block h-[18px] leading-[18px] text-border-strong transition-transform duration-[400ms] ease-out group-hover:-translate-y-full">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="block h-[18px] leading-[18px] text-ink transition-transform duration-[400ms] ease-out group-hover:-translate-y-full">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                   </span>
                 </div>
 

@@ -67,13 +67,16 @@ export default function RootLayout({
             loader is an opaque overlay only JS can dismiss. Without JS
             nothing would ever clear either, so neutralise both. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1 !important;transform:none !important;}[data-loader],[data-route-transition]{display:none !important;}`}</style>
+          <style>{`[data-reveal]{opacity:1 !important;transform:none !important;}[data-reveal-clip]{clip-path:none !important;}[data-split-shard]{transform:none !important;}[data-loader],[data-route-transition]{display:none !important;}`}</style>
         </noscript>
       </head>
       <body>
         <Loader />
         <RouteTransition />
         {children}
+        {/* Above everything, including the loader: the grain belongs to the
+            sheet, and a sheet does not stop being paper while it loads. */}
+        <div className="grain" aria-hidden />
         <StagingBadge />
       </body>
     </html>

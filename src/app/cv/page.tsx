@@ -7,6 +7,7 @@ import { CvDocument } from "@/components/sections/CvDocument";
 import { CvDownload } from "@/components/ui/CvDownload";
 import { OrbitArcs } from "@/components/ui/Decor";
 import { Reveal } from "@/components/ui/Reveal";
+import { TextReveal } from "@/components/ui/TextReveal";
 import { getCv } from "@/lib/getCv";
 import { siteSettingsQuery, type SiteSettings } from "@/lib/queries";
 import { seedSiteSettings } from "@/lib/seed";
@@ -91,17 +92,20 @@ export default async function CvPage() {
         <section className="border-t border-border bg-surface py-[64px] lg:py-[80px]">
           <div className="shell">
             <div className="flex flex-col items-start gap-7 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
-              <Reveal>
-                <div>
-                  <h2 className="font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-ink sm:text-[32px]">
-                    Take a copy with you
-                  </h2>
+              <div>
+                <TextReveal
+                  as="h2"
+                  text="Take a copy with you"
+                  stagger={0.06}
+                  className="font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-ink sm:text-[32px]"
+                />
+                <Reveal delay={0.1}>
                   <p className="mt-3 max-w-[460px] text-[14px] leading-[1.8] text-muted">
                     Generated from this page, so the download is never a stale
                     file sitting in a folder somewhere.
                   </p>
-                </div>
-              </Reveal>
+                </Reveal>
+              </div>
               <Reveal delay={0.08}>
                 <CvDownload />
               </Reveal>
