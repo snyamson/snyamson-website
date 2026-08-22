@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 
@@ -78,6 +79,13 @@ export default function RootLayout({
             sheet, and a sheet does not stop being paper while it loads. */}
         <div className="grain" aria-hidden />
         <StagingBadge />
+
+        {/* Production only. Staging is a real deployment serving draft
+            content to whoever is reviewing it, and its page views are not
+            page views — counting them would put internal traffic in the
+            same number as the audience. Drop the condition if you would
+            rather see staging in the figures. */}
+        {isStaging ? null : <Analytics />}
       </body>
     </html>
   );
