@@ -7,6 +7,7 @@ import {
   cvExperience,
   cvLanguage,
   cvProfile,
+  cvProject,
   cvSkillGroup,
 } from "./cv";
 import { hero } from "./hero";
@@ -27,6 +28,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   cvProfile,
   cvEducation,
   cvExperience,
+  cvProject,
   cvCertification,
   cvLanguage,
   cvSkillGroup,

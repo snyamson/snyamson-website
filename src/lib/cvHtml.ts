@@ -6,6 +6,7 @@ import {
   formatRange,
   type Cv,
   type CvCertification,
+  type CvProject,
 } from "@/lib/cv";
 
 /**
@@ -136,6 +137,23 @@ export function cvToHtml(cv: Cv): string {
     );
   }).join("");
 
+  const projects = cv.projects
+    .map((item: CvProject) => {
+      const place = [item.organisation, item.location].filter(Boolean).join(" · ");
+      return `<article class="entry">
+        <div class="entry-head">
+          <h3>${e(item.role)}</h3>
+          <span class="dates">${e(formatRange(item.startDate, item.endDate, item.current))}</span>
+        </div>
+        <p class="subtitle">${e(item.title)}</p>
+        ${place ? `<p class="meta">${e(place)}</p>` : ""}
+        ${item.summary ? `<p class="body">${e(item.summary)}</p>` : ""}
+        ${bullets(item.highlights)}
+        ${item.tools.length > 0 ? tags(item.tools) : ""}
+      </article>`;
+    })
+    .join("");
+
   const languages = `${
     cv.languages.length > 0
       ? `<ul class="langs">${cv.languages
@@ -248,6 +266,7 @@ export function cvToHtml(cv: Cv): string {
 
   ${section("Education", education)}
   ${experienceSections}
+  ${projects ? section("Selected projects", projects) : ""}
   ${
     professionalCerts.length > 0
       ? section(

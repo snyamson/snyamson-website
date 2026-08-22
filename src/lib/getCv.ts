@@ -4,6 +4,7 @@ import {
   cvExperienceQuery,
   cvLanguagesQuery,
   cvProfileQuery,
+  cvProjectsQuery,
   cvSkillsQuery,
   type Cv,
   type CvCertification,
@@ -11,6 +12,7 @@ import {
   type CvExperience,
   type CvLanguage,
   type CvProfile,
+  type CvProject,
   type CvSkillGroup,
 } from "@/lib/cv";
 import {
@@ -19,6 +21,7 @@ import {
   seedCvExperience,
   seedCvLanguages,
   seedCvProfile,
+  seedCvProjects,
   seedCvSkills,
 } from "@/lib/cvSeed";
 import { sanityFetch } from "@/sanity/client";
@@ -29,15 +32,23 @@ import { sanityFetch } from "@/sanity/client";
  * screen.
  */
 export async function getCv(): Promise<Cv> {
-  const [profile, education, experience, certifications, languages, skills] =
-    await Promise.all([
-      sanityFetch<CvProfile>(cvProfileQuery, seedCvProfile),
-      sanityFetch<CvEducation[]>(cvEducationQuery, seedCvEducation),
-      sanityFetch<CvExperience[]>(cvExperienceQuery, seedCvExperience),
-      sanityFetch<CvCertification[]>(cvCertificationsQuery, seedCvCertifications),
-      sanityFetch<CvLanguage[]>(cvLanguagesQuery, seedCvLanguages),
-      sanityFetch<CvSkillGroup[]>(cvSkillsQuery, seedCvSkills),
-    ]);
+  const [
+    profile,
+    education,
+    experience,
+    projects,
+    certifications,
+    languages,
+    skills,
+  ] = await Promise.all([
+    sanityFetch<CvProfile>(cvProfileQuery, seedCvProfile),
+    sanityFetch<CvEducation[]>(cvEducationQuery, seedCvEducation),
+    sanityFetch<CvExperience[]>(cvExperienceQuery, seedCvExperience),
+    sanityFetch<CvProject[]>(cvProjectsQuery, seedCvProjects),
+    sanityFetch<CvCertification[]>(cvCertificationsQuery, seedCvCertifications),
+    sanityFetch<CvLanguage[]>(cvLanguagesQuery, seedCvLanguages),
+    sanityFetch<CvSkillGroup[]>(cvSkillsQuery, seedCvSkills),
+  ]);
 
   return {
     /*
@@ -60,6 +71,7 @@ export async function getCv(): Promise<Cv> {
     },
     education,
     experience,
+    projects,
     certifications,
     languages,
     skills,

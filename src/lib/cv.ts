@@ -49,6 +49,26 @@ export type CvExperience = {
   highlights: string[];
 };
 
+/**
+ * A named piece of work, listed separately from the job it sat under. See
+ * the schema note: a consultancy that runs alongside a role does not belong
+ * on the employment timeline.
+ */
+export type CvProject = {
+  _id: string;
+  title: string;
+  role: string;
+  organisation: string | null;
+  location: string | null;
+  startDate: string;
+  endDate: string | null;
+  current: boolean;
+  summary: string | null;
+  highlights: string[];
+  tools: string[];
+  url: string | null;
+};
+
 export type CvCertification = {
   _id: string;
   title: string;
@@ -81,6 +101,7 @@ export type Cv = {
   profile: CvProfile;
   education: CvEducation[];
   experience: CvExperience[];
+  projects: CvProject[];
   certifications: CvCertification[];
   languages: CvLanguage[];
   skills: CvSkillGroup[];
@@ -142,6 +163,23 @@ export const cvExperienceQuery = groq`
     endDate,
     "current": coalesce(current, false),
     "highlights": coalesce(highlights, [])
+  }
+`;
+
+export const cvProjectsQuery = groq`
+  *[_type == "cvProject"] | order(startDate desc){
+    _id,
+    title,
+    role,
+    organisation,
+    location,
+    startDate,
+    endDate,
+    "current": coalesce(current, false),
+    summary,
+    "highlights": coalesce(highlights, []),
+    "tools": coalesce(tools, []),
+    url
   }
 `;
 

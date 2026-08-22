@@ -1,6 +1,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import { Reveal } from "@/components/ui/Reveal";
+import { TextReveal } from "@/components/ui/TextReveal";
 import { cn } from "@/lib/cn";
 import {
   educationFacts,
@@ -11,6 +12,7 @@ import {
   type CvCertification,
   type CvEducation,
   type CvExperience,
+  type CvProject,
 } from "@/lib/cv";
 import { STAGGER } from "@/lib/motion";
 
@@ -107,7 +109,7 @@ function Tags({ items }: { items: string[] }) {
       {items.map((item) => (
         <li
           key={item}
-          className="rounded-full border border-border-strong px-3 py-1.5 font-body text-[11px] text-ink"
+          className="rounded-full border border-border-strong px-3 py-1.5 font-body text-[11px] text-ink transition-[background-color,border-color,transform] duration-[250ms] ease-out hover:-translate-y-0.5 hover:border-ink hover:bg-sand"
         >
           {item}
         </li>
@@ -186,6 +188,46 @@ function ExperienceEntry({ item, delay }: { item: CvExperience; delay: number })
   );
 }
 
+/**
+ * A project entry. Unlike a job, it leads with what the work was before the
+ * bullet list — a reader scanning the section wants to know the shape of the
+ * thing before they commit to five lines about it.
+ */
+function ProjectEntry({ item, delay }: { item: CvProject; delay: number }) {
+  const place = [item.organisation, item.location].filter(Boolean).join(" · ");
+
+  return (
+    <Entry
+      title={item.role}
+      subtitle={item.title}
+      meta={place || null}
+      dates={formatRange(item.startDate, item.endDate, item.current)}
+      delay={delay}
+    >
+      {item.summary ? (
+        <p className="mt-4 max-w-[62ch] text-[14px] leading-[1.85] text-muted">
+          {item.summary}
+        </p>
+      ) : null}
+
+      <Bullets items={item.highlights} />
+
+      {item.tools.length > 0 ? <Tags items={item.tools} /> : null}
+
+      {item.url ? (
+        <p className="mt-4">
+          <a
+            href={item.url}
+            className="font-body text-[13px] text-ink underline-offset-4 hover:underline"
+          >
+            Read the case study
+          </a>
+        </p>
+      ) : null}
+    </Entry>
+  );
+}
+
 function CertificationRow({ item }: { item: CvCertification }) {
   const place = [item.issuer, item.location, item.country].filter(Boolean).join(" · ");
   const when = item.inProgress ? "In progress" : formatMonth(item.date);
@@ -223,11 +265,15 @@ export function CvDocument({ cv }: { cv: Cv }) {
     <div className="space-y-14 lg:space-y-16">
       {/* Header */}
       <header>
-        <Reveal>
-          <h1 className="font-display text-[clamp(40px,6.4vw,76px)] font-light leading-[0.98] tracking-[-0.035em] text-ink">
-            {profile.fullName}
-          </h1>
-        </Reveal>
+        {/* The name rises the way every other page's masthead does — a CV is
+            still a page with a subject, and this is the subject. */}
+        <TextReveal
+          as="h1"
+          text={profile.fullName}
+          trigger="mount"
+          stagger={0.07}
+          className="font-display text-[clamp(40px,6.4vw,76px)] font-light leading-[0.98] tracking-[-0.035em] text-ink"
+        />
         {profile.headline ? (
           <Reveal delay={0.06}>
             <p className="mt-4 font-body text-[15px] text-ink">{profile.headline}</p>
@@ -312,6 +358,16 @@ export function CvDocument({ cv }: { cv: Cv }) {
           </Section>
         );
       })}
+
+      {cv.projects.length > 0 ? (
+        <Section label="Selected projects">
+          <div className="space-y-8">
+            {cv.projects.map((item, index) => (
+              <ProjectEntry key={item._id} item={item} delay={index * STAGGER} />
+            ))}
+          </div>
+        </Section>
+      ) : null}
 
       {professionalCerts.length > 0 ? (
         <Section label="Certification">

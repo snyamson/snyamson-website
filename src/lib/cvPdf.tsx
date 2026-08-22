@@ -14,6 +14,7 @@ import {
   formatRange,
   type Cv,
   type CvCertification,
+  type CvProject,
 } from "@/lib/cv";
 
 /**
@@ -204,6 +205,32 @@ function Tags({ items }: { items: string[] }) {
   );
 }
 
+/**
+ * A project entry. Same furniture as a job, with the summary line and the
+ * tools row a job does not have.
+ */
+function ProjectEntry({ item }: { item: CvProject }) {
+  const place = [item.organisation, item.location].filter(Boolean).join(" · ");
+
+  return (
+    <View style={styles.entry}>
+      <View style={styles.entryHead} wrap={false}>
+        <Text style={styles.entryTitle}>{item.role}</Text>
+        <Text style={styles.entryDates}>
+          {formatRange(item.startDate, item.endDate, item.current)}
+        </Text>
+      </View>
+      <Text style={styles.entrySubtitle}>{item.title}</Text>
+      {place ? <Text style={styles.entryMeta}>{place}</Text> : null}
+      {item.summary ? (
+        <Text style={styles.description}>{item.summary}</Text>
+      ) : null}
+      <Bullets items={item.highlights} />
+      <Tags items={item.tools} />
+    </View>
+  );
+}
+
 function Section({
   label,
   children,
@@ -363,6 +390,15 @@ export function CvPdf({ cv }: { cv: Cv }) {
             </Section>
           );
         })}
+
+        {/* Selected projects */}
+        {cv.projects.length > 0 ? (
+          <Section label="Selected projects">
+            {cv.projects.map((item) => (
+              <ProjectEntry key={item._id} item={item} />
+            ))}
+          </Section>
+        ) : null}
 
         {/* Certification */}
         {professionalCerts.length > 0 ? (

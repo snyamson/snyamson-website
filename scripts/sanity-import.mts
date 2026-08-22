@@ -8,11 +8,13 @@
  *   node --env-file=.env.local scripts/sanity-import.ts            # dry run
  *   node --env-file=.env.local scripts/sanity-import.ts --write    # create missing
  *   node --env-file=.env.local scripts/sanity-import.ts --write --replace
+ *   node --env-file=.env.local scripts/sanity-import.ts --write --images
  *
  * Defaults are deliberately cautious:
  *   - without --write nothing is sent, it only prints what it would do
  *   - --write uses createIfNotExists, so your edits are never overwritten
  *   - --replace is the only way to clobber existing documents
+ *   - --images is the only way to upload artwork (see below)
  *
  * Requires SANITY_WRITE_TOKEN in .env.local — create one with Editor rights
  * at https://www.sanity.io/manage under API → Tokens.
@@ -21,6 +23,9 @@
  * imports are erased before execution, so the "@/" alias never has to
  * resolve here. Keep it that way or this script needs a bundler.
  */
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { createClient } from "@sanity/client";
 
 import {
@@ -38,6 +43,7 @@ import {
   seedCvExperience,
   seedCvLanguages,
   seedCvProfile,
+  seedCvProjects,
   seedCvSkills,
 } from "../src/lib/cvSeed.ts";
 
@@ -46,6 +52,7 @@ type Doc = Record<string, unknown> & { _id: string; _type: string };
 const args = new Set(process.argv.slice(2));
 const write = args.has("--write");
 const replace = args.has("--replace");
+const images = args.has("--images");
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
@@ -145,6 +152,9 @@ const docs: Doc[] = [
   ...seedCvExperience.map((item) =>
     clean({ ...item, _type: "cvExperience" }),
   ),
+  ...seedCvProjects.map((item) =>
+    clean({ ...item, _type: "cvProject" }),
+  ),
   ...seedCvCertifications.map((item) =>
     clean({ ...item, _type: "cvCertification" }),
   ),
@@ -176,7 +186,8 @@ const byType = docs.reduce<Record<string, number>>((acc, doc) => {
 
 console.log(`\n  Project  ${projectId}`);
 console.log(`  Dataset  ${dataset}`);
-console.log(`  Mode     ${!write ? "dry run" : replace ? "REPLACE existing" : "create if missing"}\n`);
+console.log(`  Mode     ${!write ? "dry run" : replace ? "REPLACE existing" : "create if missing"}`);
+console.log(`  Images   ${images ? "upload and attach" : "skipped (pass --images)"}\n`);
 console.log(`  ${docs.length} documents:`);
 for (const [type, count] of Object.entries(byType)) {
   console.log(`    ${String(count).padStart(3)}  ${type}`);
@@ -218,4 +229,79 @@ try {
     );
   }
   process.exit(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Artwork
+ *
+ * Kept out of the document transaction on purpose. Uploading is a separate
+ * request per file, it is the slow part of this script, and it is the only
+ * part that can fail because of something on disk rather than in the data —
+ * so it runs last, once the content is safely in, and only when asked for.
+ *
+ * Sanity keys assets by content hash, so re-running this does not pile up
+ * copies of the same image; the second upload resolves to the first asset.
+ *
+ * A patch rather than part of the create: `createIfNotExists` leaves an
+ * existing document alone, which is right for copy an editor may have
+ * rewritten but wrong for artwork generated from a file in the repo.
+ * ------------------------------------------------------------------ */
+type Artwork = { slug: string; title: string; field: string; file: string };
+
+const artwork: Artwork[] = seedProjectDetails.flatMap((project) => [
+  {
+    slug: project.slug,
+    title: project.title,
+    field: "thumbnail",
+    file: `${project.slug}-thumbnail.png`,
+  },
+  {
+    slug: project.slug,
+    title: project.title,
+    field: "heroImage",
+    file: `${project.slug}-banner.png`,
+  },
+]);
+
+if (images) {
+  let attached = 0;
+  console.log("  Artwork:");
+
+  for (const item of artwork) {
+    const filePath = path.join(process.cwd(), "public", "work", item.file);
+
+    let data: Buffer;
+    try {
+      data = await readFile(filePath);
+    } catch {
+      // No artwork for this project yet, which is the normal case — the
+      // placeholder components draw the card instead.
+      continue;
+    }
+
+    try {
+      const asset = await client.assets.upload("image", data, {
+        filename: item.file,
+      });
+
+      await client
+        .patch(`project-${item.slug}`)
+        .set({
+          [item.field]: {
+            _type: "image",
+            asset: { _type: "reference", _ref: asset._id },
+            alt: item.title,
+          },
+        })
+        .commit();
+
+      attached += 1;
+      console.log(`    ${item.file} -> ${item.slug}.${item.field}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`    failed on ${item.file}: ${message}`);
+    }
+  }
+
+  console.log(`  ${attached} image${attached === 1 ? "" : "s"} attached.`);
 }

@@ -52,6 +52,7 @@ export const structure: StructureResolver = (S) =>
               S.divider(),
               S.documentTypeListItem("cvEducation").title("Education").icon(DocumentIcon),
               S.documentTypeListItem("cvExperience").title("Experience").icon(CaseIcon),
+              S.documentTypeListItem("cvProject").title("Projects").icon(ImagesIcon),
               S.documentTypeListItem("cvCertification")
                 .title("Certifications")
                 .icon(StarIcon),

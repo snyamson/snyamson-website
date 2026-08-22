@@ -20,6 +20,9 @@
  *      without an end date or a note that it is remote/part-time.
  *   2. The German language certificates are placeholders for structure only.
  *      Replace the school, city, grade and date with the real ones.
+ *   3. The AGRA project runs Sep–Nov 2024 here. Only the year is known;
+ *      the months are a twelve-week window standing in for the real ones.
+ *      Set them before anyone reads this as a date.
  */
 import type {
   CvCertification,
@@ -27,6 +30,7 @@ import type {
   CvExperience,
   CvLanguage,
   CvProfile,
+  CvProject,
   CvSkillGroup,
 } from "@/lib/cv";
 
@@ -195,6 +199,117 @@ export const seedCvExperience: CvExperience[] = [
       "Facilitated tutorial sessions for 80 colleagues, tailoring lessons to individual needs — 75 students achieved grades A and B in their final exams.",
       "Mentored 20 students in research data collection, analysis and presentation.",
     ],
+  },
+];
+
+export const seedCvProjects: CvProject[] = [
+  {
+    _id: "cv-project-rice-dialogues",
+    title: "Rice Policy Dialogues — Sierra Leone",
+    role: "Data Analyst & M&E Consultant",
+    organisation:
+      "AGRA and the Sierra Leone Rice Observatory, funded by UK FCDO, delivered through Warc Consultants LLC",
+    location: "Sierra Leone",
+    startDate: "2026-08-01",
+    endDate: null,
+    current: true,
+    summary:
+      "A five-phase policy engagement for AGRA and the Sierra Leone Rice Observatory: identify the constraints holding back the rice sector, convene the actors who would have to fix them, and land recommendations with named institutional owners.",
+    highlights: [
+      "Support the development of the key informant interview and focus group instruments used to validate the six policy bottlenecks surfaced by the desk review, and to surface the constraints widely experienced but never documented.",
+      "Contribute to the stakeholder mapping across the value chain and wider policy ecosystem, assessing influence and interest to design a tiered engagement that separates breadth of voice from depth of consultation.",
+      "Analyse consultation findings by thematic area, feeding the consolidation of overlapping constraints and the scoring of each issue against a common seven-criterion framework covering impact, breadth, feasibility, private investment, food security and time to results.",
+      "Work within a policy landscape spanning the Feed Salone Strategy, the National Rice Development Strategy, ECOWAP and the ECOWAS Rice Offensive, so recommendations sit coherently against national and regional commitments rather than beside them.",
+    ],
+    tools: [
+      "Stakeholder mapping",
+      "Key informant interviews",
+      "Thematic analysis",
+      "Policy prioritisation",
+    ],
+    url: "/work/rice-policy-dialogues-sierra-leone",
+  },
+  {
+    _id: "cv-project-iwmi-rainfed",
+    title:
+      "Rainfed Water Management and Climate Risk Study — Upper West, Ghana",
+    role: "Data & M&E Supervisor",
+    organisation: "IWMI, delivered through Warc Consultants LLC",
+    location: "Sissala East & Sissala West, Upper West Region",
+    startDate: "2025-01-01",
+    endDate: "2025-02-01",
+    current: false,
+    summary:
+      "The Upper West leg of a three-zone study for the USAID Feed the Future Innovation Lab for Irrigation and Mechanization Systems, on the risks smallholders face in rainfed farming and what they already do about them.",
+    highlights: [
+      "Adapted and pretested IWMI’s draft quantitative and qualitative instruments for the Upper West context, and harmonised them with the teams covering the other two agro-ecological zones so the three datasets could be pooled rather than only filed together.",
+      "Programmed the instruments into KoBo Collect in the local languages, trained four enumerators over two days, and ran a community entry and pilot round before live collection to find the questions people would not answer as written.",
+      "Supervised 130 household surveys across five communities in Sissala East and Sissala West — twenty-six per community, five above the analysis minimum so records lost to quality checks would not put the sample under.",
+      "Ran quality checks daily against the collection protocol and kept the progress dashboard current, so an enumerator drifting from the script was corrected the next morning rather than at the end of the round.",
+      "Oversaw key informant interviews and focus group discussions with input dealers, commercial and irrigation farmers, the district agriculture directorate and the environmental protection agency, alongside GPS crop classification inside an IWMI-supplied watershed boundary.",
+      "Delivered the cleaned quantitative dataset in STATA with a codebook, the transcribed qualitative material, and initial analysis and reporting. Work ended in February 2025 when USAID cancelled the programme.",
+    ],
+    tools: [
+      "KoBo Collect",
+      "STATA",
+      "GPS crop classification",
+      "Enumerator training",
+    ],
+    url: "/work/iwmi-rainfed-water-management",
+  },
+  {
+    _id: "cv-project-agra-regulatory",
+    title:
+      "Assessment of the Business Regulatory Environment for Youth and MSMEs in Ghana",
+    role: "Data Analyst & M&E Expert",
+    organisation: "AGRA, delivered through Warc Consultants LLC",
+    location: "Ghana",
+    // Only the year is confirmed — see note 3 at the top of this file.
+    startDate: "2024-09-01",
+    endDate: "2024-11-01",
+    current: false,
+    summary:
+      "A twelve-week qualitative study of Ghana’s business registration and product certification processes, commissioned to give AGRA evidence for policy advocacy on behalf of youth and small agribusinesses.",
+    highlights: [
+      "Built the key informant interview and focus group guides so regulators and agripreneurs were put to the same questions, letting the process as written be compared directly against the process as experienced.",
+      "Ran transcription and coding alongside fieldwork rather than after it, so gaps in the evidence surfaced while the field team was still in place.",
+      "Coded and analysed the full transcript set in MAXQDA against a framework drawn from the material — bureaucratic delay, cost, awareness, gender, accessibility and compliance pressure — and quantified each theme so findings could be reported as a share of respondents.",
+      "Established that the barrier is belief rather than price: sole proprietorship registration costs 120 cedis, while respondents described it as unaffordable and assumed registering would trigger an immediate tax bill.",
+      "Found 70% of respondents citing bureaucratic delay against a published two-to-five day turnaround, and a gender split in which women dominate processing and packaging but register far less than men.",
+      "Wrote up the evidence into the policy document setting out the registration and certification requirements and the reforms the findings support.",
+    ],
+    tools: [
+      "MAXQDA",
+      "Key informant interviews",
+      "Focus group discussions",
+      "Thematic analysis",
+    ],
+    url: "/work/agra-regulatory-environment-ghana",
+  },
+  {
+    _id: "cv-project-aip",
+    title: "Agricultural Intensification Programme (AIP) — Ghana & Sierra Leone",
+    role: "M&E Consultant",
+    organisation: "Warc Consultants LLC",
+    location: "Ghana & Sierra Leone",
+    startDate: "2025-01-01",
+    endDate: "2026-02-01",
+    current: false,
+    summary:
+      "A two-country programme replacing the farm production displaced by forest restoration, where the yield claim had to be provable farmer by farmer.",
+    highlights: [
+      "Built one management system covering both countries, holding farmer profiles, plot allocations, plot boundary maps and input distribution in a single record, so a farmer, the land they were given and what they received against it can be read together.",
+      "Collected and analysed baseline grower records for enrolled farmers in ODK Collect, including a socio-economic survey and self-reported yields for the three years before the programme on each piece of land.",
+      "Designed the crop and boundary mapping survey and automated plot map generation with satellite layers and coordinates, so every plot in the programme traces back to the participant it was assigned to.",
+      "Wrote the end-of-year impact assessment methodology, using coarsened exact matching to pair treatment and control farmers on geography, farm size, land type and tenure, crop mix, gender, age band, input use and market access, at 95% confidence and 80% power.",
+      "Set the field screening rules and an adaptive sampling protocol for communities where enough matched controls could not be found, so shortfalls are recorded with the bias they introduce rather than quietly dropped.",
+    ],
+    tools: [
+      "ODK Collect",
+      "GPS plot mapping",
+      "Coarsened exact matching",
+    ],
+    url: "/work/aip-ghana-sierra-leone",
   },
 ];
 

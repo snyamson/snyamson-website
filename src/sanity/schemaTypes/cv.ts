@@ -395,3 +395,106 @@ export const cvSkillGroup = defineType({
     }),
   },
 });
+
+/**
+ * A named piece of work, separate from the job it was done under.
+ *
+ * Consultancies and programmes do not fit the employment timeline: they run
+ * alongside a role, they are the thing worth reading about, and listing them
+ * as jobs would make the employment history look like job-hopping. They get
+ * their own section, and `url` can point at the full case study under /work.
+ */
+export const cvProject = defineType({
+  name: "cvProject",
+  title: "CV — project",
+  type: "document",
+  icon: CaseIcon,
+  fields: [
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "role",
+      title: "Role",
+      description: 'What you were on it, e.g. "M&E Consultant"',
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "organisation",
+      title: "Organisation",
+      description: "Who it was delivered through or for. Leave blank to omit.",
+      type: "string",
+    }),
+    defineField({
+      name: "location",
+      title: "Location",
+      description: 'e.g. "Ghana & Sierra Leone"',
+      type: "string",
+    }),
+    defineField({
+      name: "startDate",
+      title: "Start date",
+      type: "date",
+      options: { dateFormat: "MMMM YYYY" },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "endDate",
+      title: "End date",
+      description: "Leave empty if this is ongoing.",
+      type: "date",
+      options: { dateFormat: "MMMM YYYY" },
+    }),
+    defineField({
+      name: "current",
+      title: "Current",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "summary",
+      title: "Summary",
+      description: "One or two sentences on what the work was.",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "highlights",
+      title: "Highlights",
+      description: "One achievement per entry. Lead with the outcome where you can.",
+      type: "array",
+      of: [{ type: "text", rows: 3 }],
+    }),
+    defineField({
+      name: "tools",
+      title: "Tools & methods",
+      type: "array",
+      of: [{ type: "string" }],
+      options: { layout: "tags" },
+    }),
+    defineField({
+      name: "url",
+      title: "Case study URL",
+      description: 'Optional. Usually the matching page under /work.',
+      type: "string",
+    }),
+  ],
+  orderings: [
+    {
+      name: "recent",
+      title: "Most recent first",
+      by: [{ field: "startDate", direction: "desc" }],
+    },
+  ],
+  preview: {
+    select: { title: "title", role: "role", organisation: "organisation" },
+    prepare: ({ title, role, organisation }) => ({
+      title,
+      subtitle: [role, organisation].filter(Boolean).join(" · "),
+    }),
+  },
+});
