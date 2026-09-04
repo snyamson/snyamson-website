@@ -23,6 +23,8 @@
  *   3. The AGRA project runs Sep–Nov 2024 here. Only the year is known;
  *      the months are a twelve-week window standing in for the real ones.
  *      Set them before anyone reads this as a date.
+ *   4. The Warc BI platform starts Jan 2026 here. Only "2026, ongoing" is
+ *      confirmed — the month is a placeholder. Set the real start date.
  */
 import type {
   CvCertification,
@@ -203,6 +205,37 @@ export const seedCvExperience: CvExperience[] = [
 ];
 
 export const seedCvProjects: CvProject[] = [
+  {
+    _id: "cv-project-warc-bi",
+    title: "Business Intelligence Platform — Warc Group, Ghana & Uganda",
+    role: "Analytics Engineer",
+    organisation: "Warc Group LLC",
+    location: "Ghana & Uganda",
+    // Only "2026, ongoing" is confirmed — see note 4 at the top of this file.
+    startDate: "2026-01-01",
+    endDate: null,
+    current: true,
+    summary:
+      "An enterprise BI platform consolidating six source systems across Ghana and Uganda into one governed Power BI semantic model, built on a Medallion architecture and deployed through Azure DevOps.",
+    highlights: [
+      "Stood up the ingestion layer on a dedicated AWS EC2 Windows Server: an NSSM-managed SSH tunnel forwarding the Odoo.sh PostgreSQL database to localhost:5433 as a Windows service, the PostgreSQL ODBC driver over it, and the On-Premises Data Gateway on the same instance — the two databases accept no inbound connections, so nothing could be modelled until the route existed and survived a reboot unattended.",
+      "Staged Odoo ERP, the Farmer App, Kedebah, Uganda’s AppSheet/Google Sheets operation, Oanda FX rates and Microsoft Graph into six independently scheduled Power BI Dataflows, so a slow ERP extract cannot hold up the mobile app data and a failing source fails alone.",
+      "Built the Medallion architecture inside Power Query: Bronze pulls each dataflow untransformed so a source schema change lands in one place, Silver applies type casting, Table.Combine across the three transaction apps and coalesce rules for their conflicting timestamps, and Gold is thin references to Silver — dim_farmers, dim_hubs, dim_products and fct_transactions.",
+      "Automated the FX feed with a Power Automate Desktop bot on the same instance, pulling daily and monthly Oanda rates into Dataverse, and read historical Kedebah records held in S3 through Amazon Athena rather than moving them.",
+      "Enforced governance in the platform rather than in documentation: Row-Level Security so the Ghana and Uganda teams read only their own rows out of one model, and data and report workspaces separated on a thin-report architecture so backend schema work and report work deploy independently.",
+      "Set up promotion across six workspaces through Power BI Deployment Pipelines with an Azure DevOps refresh.yml driving dataflow and semantic model refresh, so no schema change reaches production without passing the pipeline.",
+      "Delivered the operational tier — produce inventory, purchase transactions consolidated across both countries, and live exchange rates. Sales consolidation and the sales-input inventory dashboard are in progress, ahead of hub performance, offtaker distribution KPIs and an executive layer.",
+    ],
+    tools: [
+      "Power BI",
+      "Power Query (M)",
+      "Azure DevOps",
+      "AWS EC2 & Athena",
+      "PostgreSQL / ODBC",
+      "Power Automate Desktop",
+    ],
+    url: "/work/warc-business-intelligence-platform",
+  },
   {
     _id: "cv-project-rice-dialogues",
     title: "Rice Policy Dialogues — Sierra Leone",

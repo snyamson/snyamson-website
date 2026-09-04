@@ -1,5 +1,5 @@
 /**
- * Draws the artwork for the AIP case study and writes it to public/work/.
+ * Draws the artwork for the case studies and writes it to public/work/.
  *
  *   node scripts/make-project-art.mts
  *
@@ -1029,6 +1029,324 @@ function iwmiBanner(): string {
 }
 
 /* ------------------------------------------------------------------ *
+ * Panels for the Warc BI platform
+ *
+ * The real report cannot be published either, for the opposite reason to the
+ * AIP screenshots: nothing on it is personal, but every tile is company
+ * revenue, tonnage and headcount. So this draws the architecture instead of
+ * the numbers it produces — sources converging on one gateway, the three
+ * Medallion layers narrowing into four tables, and the promotion path those
+ * tables travel. The tiles are here because a report is what it all pays
+ * for, but they are bars, and there is nothing behind them to read.
+ * ------------------------------------------------------------------ */
+
+/** The three Medallion layers, lightest to darkest as the data is refined. */
+const LAYERS = [
+  { nodes: 9, fill: SAND },
+  { nodes: 6, fill: SAND_DEEP },
+  { nodes: 4, fill: INK },
+];
+
+/** KPI tiles: a label, a figure, and the line behind it. All shapes. */
+function kpiTiles(box: Box, count: number): string {
+  const gap = 16;
+  const w = (box.w - gap * (count - 1)) / count;
+
+  return Array.from({ length: count }, (_, i) => {
+    const tile: Box = { x: box.x + i * (w + gap), y: box.y, w, h: box.h };
+    const pad = 18;
+    const left = tile.x + pad;
+    const inner = w - pad * 2;
+
+    // Fixed rather than random, so re-running the generator produces the
+    // same bytes.
+    const points = [0.34, 0.52, 0.44, 0.68, 0.6, 0.82, 0.76]
+      .map((f, j, all) => {
+        const x = left + (inner * j) / (all.length - 1);
+        const y = tile.y + tile.h - pad - 6 - inner * 0.18 * f;
+        return `${round(x)},${round(y)}`;
+      })
+      .join(" ");
+
+    return [
+      panel(tile),
+      bar(left, tile.y + pad, inner * (0.5 - i * 0.05), 9, BORDER_STRONG),
+      // The figure, drawn at the weight a headline number carries.
+      bar(left, tile.y + pad + 24, inner * (0.78 - i * 0.09), 24, INK),
+      `<polyline points="${points}" fill="none" stroke="${SAND_DEEP}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,
+    ].join("");
+  }).join("");
+}
+
+/**
+ * The source systems, converging. Six rows on the left, each elbowing into
+ * one trunk, and a single gateway everything passes through — which is the
+ * shape of the problem as much as of the answer to it.
+ */
+function sourceStack(box: Box, rows: number): string {
+  const pad = 24;
+  const left = box.x + pad;
+  const trunkX = box.x + box.w - pad - 40;
+  const gap = (box.h - pad * 2) / rows;
+  const top = box.y + pad;
+  const rowWidth = trunkX - left - 30;
+
+  const items = Array.from({ length: rows }, (_, i) => {
+    const cy = top + gap * i + gap / 2;
+    const swatch = i % 3 === 0 ? INK : i % 3 === 1 ? INK_2 : SAND_DEEP;
+    return [
+      `<rect x="${round(left)}" y="${round(cy - 11)}" width="22" height="22" rx="7" fill="${swatch}"/>`,
+      bar(left + 32, cy - 5, rowWidth * (0.66 - (i % 4) * 0.07), 10, BORDER),
+      `<path d="M ${round(left + rowWidth)} ${round(cy)} H ${round(trunkX - 12)} a 12 12 0 0 1 12 12" fill="none" stroke="${BORDER_STRONG}" stroke-width="2"/>`,
+      `<circle cx="${round(left + rowWidth)}" cy="${round(cy)}" r="3.5" fill="${BORDER_STRONG}"/>`,
+    ].join("");
+  }).join("");
+
+  const gatewayY = top + gap * (rows - 1) + gap / 2 + 12;
+
+  return [
+    panel(box),
+    items,
+    // The trunk stops at the gateway rather than running past it.
+    `<path d="M ${round(trunkX)} ${round(top + gap / 2 + 12)} V ${round(gatewayY)}" stroke="${BORDER_STRONG}" stroke-width="2"/>`,
+    `<rect x="${round(trunkX - 16)}" y="${round(gatewayY)}" width="32" height="32" rx="10" fill="${INK}"/>`,
+    `<path d="M ${round(trunkX - 7)} ${round(gatewayY + 16)} h 13 m -5 -5 l 5 5 l -5 5" fill="none" stroke="${SAND}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ].join("");
+}
+
+/**
+ * Bronze, Silver, Gold. Each lane holds fewer, larger nodes than the one
+ * above it, because that is the only thing the layers actually promise:
+ * what arrives raw and wide leaves as four tables.
+ */
+function medallionLanes(box: Box): string {
+  const pad = 24;
+  const left = box.x + pad;
+  const width = box.w - pad * 2;
+  const step = 26;
+  const laneH = (box.h - pad * 2 - step * (LAYERS.length - 1)) / LAYERS.length;
+  const tagW = 28;
+
+  const lanes = LAYERS.map(({ nodes, fill }, lane) => {
+    const y = box.y + pad + lane * (laneH + step);
+    const trackX = left + tagW + 16;
+    const trackW = width - tagW - 16;
+    const slot = trackW / nodes;
+    const size = round(Math.min(slot * 0.62, laneH * 0.5));
+
+    const cells = Array.from({ length: nodes }, (_, i) => {
+      const x = trackX + i * slot + (slot - size) / 2;
+      return `<rect x="${round(x)}" y="${round(y + laneH / 2 - size / 2)}" width="${size}" height="${size}" rx="${round(size * 0.26)}" fill="${fill}"/>`;
+    }).join("");
+
+    const arrows =
+      lane === LAYERS.length - 1
+        ? ""
+        : [0.24, 0.5, 0.76]
+            .map((f) => {
+              const x = round(trackX + trackW * f);
+              const from = round(y + laneH + 5);
+              return `<path d="M ${x} ${from} v ${step - 10} m -5 -5 l 5 5 l 5 -5" fill="none" stroke="${BORDER_STRONG}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+            })
+            .join("");
+
+    return [
+      `<rect x="${round(trackX - 10)}" y="${round(y)}" width="${round(trackW + 20)}" height="${round(laneH)}" rx="10" fill="${SURFACE}"/>`,
+      `<rect x="${round(left)}" y="${round(y + laneH / 2 - 7)}" width="${tagW}" height="14" rx="7" fill="${fill}"/>`,
+      cells,
+      arrows,
+    ].join("");
+  }).join("");
+
+  return [panel(box), lanes].join("");
+}
+
+/** The star: one fact table, four dimensions, joined. */
+function starSchema(box: Box): string {
+  const cx = box.x + box.w / 2;
+  const cy = box.y + box.h / 2;
+  const factW = round(Math.min(box.w * 0.42, 210));
+  const factH = round(Math.min(box.h * 0.3, 168));
+  const dimW = round(factW * 0.78);
+  const dimH = round(factH * 0.68);
+
+  // Corners, pulled in far enough that the joins stay visible.
+  const dims: Point[] = [
+    [0.19, 0.17],
+    [0.81, 0.17],
+    [0.19, 0.83],
+    [0.81, 0.83],
+  ];
+
+  /** A table: a header band and the columns under it, all as bars. */
+  const table = (x: number, y: number, w: number, h: number, fact: boolean) => {
+    const rows = fact ? 4 : 3;
+    const pad = 11;
+    const headH = 15;
+    const rowH = (h - pad * 2 - headH - 8) / rows;
+    const columns = Array.from({ length: rows }, (_, i) =>
+      bar(
+        x + pad,
+        y + pad + headH + 8 + i * rowH + rowH / 2 - 4,
+        (w - pad * 2) * (0.82 - i * 0.13),
+        8,
+        fact ? SAND : BORDER,
+      ),
+    ).join("");
+
+    return [
+      `<rect x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" rx="9" fill="${fact ? INK : CARD}" stroke="${fact ? INK : BORDER_STRONG}" stroke-width="2"/>`,
+      `<rect x="${round(x + pad)}" y="${round(y + pad)}" width="${round((w - pad * 2) * 0.6)}" height="${headH}" rx="7" fill="${fact ? SAND_DEEP : INK_2}"/>`,
+      columns,
+    ].join("");
+  };
+
+  const joins = dims
+    .map((point) => {
+      const [x, y] = place(box, point);
+      return [
+        `<line x1="${x}" y1="${y}" x2="${round(cx)}" y2="${round(cy)}" stroke="${BORDER_STRONG}" stroke-width="2"/>`,
+        `<circle cx="${x}" cy="${y}" r="4" fill="${BORDER_STRONG}"/>`,
+      ].join("");
+    })
+    .join("");
+
+  const tables = dims
+    .map((point) => {
+      const [x, y] = place(box, point);
+      return table(x - dimW / 2, y - dimH / 2, dimW, dimH, false);
+    })
+    .join("");
+
+  return [
+    panel(box, SURFACE),
+    joins,
+    tables,
+    table(cx - factW / 2, cy - factH / 2, factW, factH, true),
+  ].join("");
+}
+
+/** Six workspaces, promoted left to right. Only the last column is live. */
+function deploymentGrid(box: Box): string {
+  const pad = 26;
+  const cols = 3;
+  const rows = 2;
+  const gapX = 34;
+  const gapY = 22;
+  const cardW = (box.w - pad * 2 - gapX * (cols - 1)) / cols;
+  const cardH = (box.h - pad * 2 - gapY * (rows - 1)) / rows;
+
+  const cards = Array.from({ length: cols * rows }, (_, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = box.x + pad + col * (cardW + gapX);
+    const y = box.y + pad + row * (cardH + gapY);
+    const live = col === cols - 1;
+    const fill = col === 0 ? CARD : col === 1 ? SURFACE : INK;
+
+    const arrow = live
+      ? ""
+      : `<path d="M ${round(x + cardW + 8)} ${round(y + cardH / 2)} h ${gapX - 16} m -7 -6 l 7 6 l -7 6" fill="none" stroke="${BORDER_STRONG}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+    return [
+      `<rect x="${round(x)}" y="${round(y)}" width="${round(cardW)}" height="${round(cardH)}" rx="9" fill="${fill}" stroke="${live ? INK : BORDER_STRONG}" stroke-width="2"/>`,
+      bar(x + 12, y + 13, cardW * 0.52, 9, live ? SAND : BORDER_STRONG),
+      bar(x + 12, y + cardH - 22, cardW * (row === 0 ? 0.68 : 0.44), 9, live ? SAND_DEEP : BORDER),
+      arrow,
+    ].join("");
+  }).join("");
+
+  return [panel(box), cards].join("");
+}
+
+/** Warc BI, 4:3 — the card in the work grid. */
+function warcThumbnail(): string {
+  const W = 1200;
+  const H = 900;
+  const frame: Box = { x: 40, y: 48, w: W - 80, h: H - 96 };
+  const barH = 72;
+  const railW = 66;
+
+  const left = frame.x + railW + 26;
+  const top = frame.y + barH + 26;
+  const right = frame.x + frame.w - 26;
+  const bottom = frame.y + frame.h - 26;
+  const gap = 24;
+
+  const height = bottom - top;
+  const colW = (right - left - gap) / 2;
+  const rightX = left + colW + gap;
+
+  return svg(
+    W,
+    H,
+    [
+      chrome(W, H, frame),
+      kpiTiles({ x: left, y: top, w: colW, h: height * 0.2 }, 2),
+      sourceStack(
+        {
+          x: left,
+          y: top + height * 0.2 + gap,
+          w: colW,
+          h: height * 0.8 - gap,
+        },
+        6,
+      ),
+      medallionLanes({ x: rightX, y: top, w: right - rightX, h: height * 0.54 }),
+      starSchema({
+        x: rightX,
+        y: top + height * 0.54 + gap,
+        w: right - rightX,
+        h: height * 0.46 - gap,
+      }),
+    ].join(""),
+  );
+}
+
+/** Warc BI, 2:1 — the banner at the top of the case study. */
+function warcBanner(): string {
+  const W = 2000;
+  const H = 1000;
+  const frame: Box = { x: 56, y: 56, w: W - 112, h: H - 112 };
+  const barH = 72;
+  const railW = 66;
+
+  const left = frame.x + railW + 30;
+  const top = frame.y + barH + 30;
+  const right = frame.x + frame.w - 30;
+  const bottom = frame.y + frame.h - 30;
+  const gap = 26;
+
+  const height = bottom - top;
+  const colW = (right - left - gap * 2) / 3;
+  const bX = left + colW + gap;
+  const cX = bX + colW + gap;
+
+  return svg(
+    W,
+    H,
+    [
+      chrome(W, H, frame),
+      sourceStack({ x: left, y: top, w: colW, h: height * 0.58 }, 6),
+      deploymentGrid({
+        x: left,
+        y: top + height * 0.58 + gap,
+        w: colW,
+        h: height * 0.42 - gap,
+      }),
+      kpiTiles({ x: bX, y: top, w: colW, h: height * 0.22 }, 3),
+      medallionLanes({
+        x: bX,
+        y: top + height * 0.22 + gap,
+        w: colW,
+        h: height * 0.78 - gap,
+      }),
+      starSchema({ x: cX, y: top, w: colW, h: height }),
+    ].join(""),
+  );
+}
+
+/* ------------------------------------------------------------------ *
  * The rice policy dialogues: a decision being reached.
  * ------------------------------------------------------------------ */
 
@@ -1102,6 +1420,10 @@ function riceBanner(): string {
  * the case-study banner. Rename a slug and its key here has to follow.
  * ------------------------------------------------------------------ */
 const ART: Record<string, { thumbnail: () => string; banner: () => string }> = {
+  "warc-business-intelligence-platform": {
+    thumbnail: warcThumbnail,
+    banner: warcBanner,
+  },
   "aip-ghana-sierra-leone": { thumbnail: aipThumbnail, banner: aipBanner },
   "agra-regulatory-environment-ghana": {
     thumbnail: agraThumbnail,
