@@ -31,3 +31,6 @@ next-env.d.ts
 # Local project notes — kept on disk, not published
 DEPLOYMENT.md
 README-DESIGN.md
+
+# Video renders (large, regenerable)
+brag-output*/
